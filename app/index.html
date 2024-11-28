@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/styles/basic.css">
+    <link rel="stylesheet" href="./assets/styles/index.css">
+    <link rel="icon" href="./assets/img/logo.jpg">
+    <title>Вход в систему</title>
+
+    <script src="./script/storageModule.js"></script>
+    <script src="./script/navModule.js"></script>
+    <script src="./script/authModule.js"></script>
+</head>
+<body style="opacity: 0; transition: .5s ease-in-out">
+    
+    <a class="returnToMain" href="/index.html">На главную</a>
+
+    <div class="globalWrapper">
+        <img src="./assets/img/man-eating-crisps.gif" alt="indexBg" class="indexBg">
+
+        <div class="signFormsWrapper">
+            <div class="indexHeaderWrapper">
+                <img class="logo" src="./assets/img/logo.jpg" alt="icon">
+                <h2 class="indexHeader">Добро пожаловать!</h2>
+            </div>
+    
+            <input type="radio" id="switchAuth" name="switchIndexMode" checked>
+            <input type="radio" id="switchReg" name="switchIndexMode">
+    
+            <form class="signForm" id="signIn">
+                <input data-type="userNick" type="text" placeholder="Ваш ник" required autocomplete="off">
+                <input data-type="userPass" type="password" placeholder="Ваш пароль" required autocomplete="off">
+        
+                <input type="submit" value="ОТПРАВИТЬ">
+            </form>
+        
+            <form class="signForm" id="signUp">
+                <input data-type="userNick" type="text" placeholder="Ваш ник" required autocomplete="off">
+                <input data-type="userPass" type="password" placeholder="Ваш пароль" required autocomplete="off">
+                <input data-type="userPassConf" type="password" placeholder="Подтвердите пароль" required autocomplete="off">
+        
+                <input type="submit" value="ОТПРАВИТЬ">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Плавное появление
+        smoothDisplayBody();
+
+        // Объявление DOM
+        
+        let signIn = document.getElementById('signIn');
+        let signUp = document.getElementById('signUp');
+        let error = document.querySelector('.error');
+
+        // Получение данных о пользователях и текущем входе
+
+        let users = getParsedElems('users');
+
+        let authUser = getSession('authUser');
+        if (authUser) {
+            toMainPage();
+        }
+
+        // Обработка форм
+
+        signIn.onsubmit = function(event) {
+            event.preventDefault();
+
+            let enteredData = wrapEnteredData(this);
+            authUser = getAuthUser(enteredData, users);
+
+            if (authUser) {
+                alert(`Добро пожаловать, ${authUser.nick}!`);
+                writeSession(authUser, 'authUser');
+                toMainPage();
+            } else {
+                alert('Некорректные данные!');
+            }
+        }
+
+        signUp.onsubmit = function(event) {
+            event.preventDefault();
+
+            let enteredData = wrapEnteredData(this);
+
+            if (checkPassConf(this)) {
+                if (!setNewUser(enteredData, users)) {
+                    alert('Такой пользователь уже существует!');
+                }
+            } else {
+                alert('Пароли не повторяются!');
+            }
+        }
+    </script>
+</body>
+</html>

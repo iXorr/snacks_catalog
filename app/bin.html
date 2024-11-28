@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/styles/basic.css">
+    <link rel="stylesheet" href="./assets/styles/main.css">
+    <link rel="stylesheet" href="./assets/styles/bin.css">
+    <link rel="icon" href="./assets/img/logo.jpg">
+    <title>Корзина</title>
+
+    <script src="./script/storageModule.js"></script>
+    <script src="./script/navModule.js"></script>
+    <script src="./script/authModule.js"></script>
+    <script src="./script/staffModule.js"></script>
+    <script src="./script/binModule.js"></script>
+    <script src="./script/templateModule.js"></script>
+
+    <script>
+        // Получение данных о текущем каталоге и входе
+
+        checkAuth();
+        let authUser = getSession('authUser');
+        let staff = getParsedElems('staff');
+        let bin = getSession('bin');
+    </script>
+</head>
+<body style="opacity: 0; transition: .25s ease-in-out">
+    
+    <a class="returnToMain" href="/index.html">На главную</a>
+
+    <div class="globalWrapper">
+        <div class="navPanel">
+            <div class="navBtns">
+                <p class="navGreeting">
+                    <img class="logo" src="./assets/img/UI/bin.svg" alt="logo">
+                    КОРЗИНА
+                </p>
+    
+                <button id="logOut" onclick="clearSession()">
+                    <img src="./assets/img/UI/log-out.svg" alt="icon">
+                </button>
+    
+                <button id="toMain" onclick="toMainPage()">
+                    <img src="./assets/img/UI/catalog.svg" alt="icon">
+                </button>
+            </div>
+
+            <div class="navPayment">
+                <button class="btnPayment">ОПЛАТИТЬ</button>
+                <p class="sumTotal">К оплате: 250 рублей</p>
+            </div>
+        </div>
+
+        <ul id="bin"></ul>
+    </div>
+
+    <script>
+        // Плавное появление
+        
+        smoothDisplayBody();
+
+        // Объявления DOM
+
+        let binList = document.getElementById('bin');
+        let navPayment = document.querySelector('.navPayment');
+        let sumTotal = document.querySelector('.sumTotal');
+
+        // Применение шаблона для корзины
+
+        createList(staff, binList, authUser);
+
+        // Отображение пустой корзины - БАГ!!!
+
+        if (binList) {
+            if (binList.children.length == 0) {
+
+                // Сообщение для админа и пользователя
+
+                if ('isAdmin' in authUser) {
+                    console.log('О, вы админ! Админу не нужна корзина');
+                } else {
+                    console.log(`${authUser.nick}, у вас пустая корзина!`);
+                }
+            }
+        }
+
+        // Интерактик элементов корзины
+
+        for (let item of binList.children) {
+            // для пользователя (добавление в корзину)
+
+            let removeStaffFromBinBtn = item.querySelector('.removeStaffFromBin');
+            
+            if (removeStaffFromBinBtn) {
+                removeStaffFromBinBtn.onclick = function() {
+                    removeStaffFromBin(item);
+                    reloadPage();
+                }
+            }
+        }
+
+        // установление общей стоимости
+
+        setTotalAmount(bin, staff, sumTotal);
+
+        // отображение пустой корзины
+
+        if (binList.children.length < 1) {
+            showMelina(binList);
+            navPayment.style.display = 'none';
+        }
+
+        // оплата... но вместо неё
+
+        navPayment.querySelector('button').onclick = () => {
+            alert('тебя когда язва схватит? наложи себе фруктов, чучело.');
+        }
+    </script>
+</body>
+</html>

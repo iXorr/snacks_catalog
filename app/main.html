@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./assets/styles/basic.css">
+    <link rel="stylesheet" href="./assets/styles/main.css">
+    <link rel="icon" href="./assets/img/logo.jpg">
+    <title>Каталог</title>
+
+    <script src="./script/storageModule.js"></script>
+    <script src="./script/navModule.js"></script>
+    <script src="./script/authModule.js"></script>
+    <script src="./script/staffModule.js"></script>
+    <script src="./script/binModule.js"></script>
+
+    <script>
+        // Получение данных о текущем каталоге, 
+        // входе и списке пользователей
+
+        checkAuth();
+        let authUser = getSession('authUser');
+        let staff = getParsedElems('staff');
+        let users = getParsedElems('users');
+    </script>
+</head>
+<body style="opacity: 0; transition: .25s ease-in-out">
+    
+    <a class="returnToMain" href="/index.html">На главную</a>
+
+    <div class="globalWrapper">
+        <div class="navPanel">
+            <div class="navBtns">
+                <p class="navGreeting">
+                    <img class="logo" src="./assets/img/UI/catalog.svg" alt="logo">
+                    КАТАЛОГ
+                </p>
+
+                <button id="logOut" onclick="clearSession()">
+                    <img src="./assets/img/UI/log-out.svg" alt="icon">
+                </button>
+
+                <button id="toBin" onclick="toBinPage()">
+                    <img src="./assets/img/UI/bin.svg" alt="icon">
+                </button>
+            </div>
+
+            <div class="adminBtns" style="display: none;">
+                <button class="addStaff">
+                    <img src="./assets/img/UI/create-new-staff.svg" alt="icon">
+                </button>
+
+                <button class="reloadStaff">
+                    <img src="./assets/img/UI/reload-staff.svg" alt="icon">
+                </button>
+            </div>
+        </div>
+    
+        <ul id="catalog">
+            <form id="editForm" style="display: block; transform: translateX(100%);"></form>
+        </ul>
+    </div>
+    
+    <script src="./script/templateModule.js"></script>
+
+    <script>
+        // Плавное появление
+        smoothDisplayBody();
+
+        // Объявление DOM
+        
+        let logOut = document.getElementById('logOut');
+        let catalog = document.getElementById('catalog');
+        let editForm = document.getElementById('editForm');
+        let addStaffBtn = document.querySelector('.addStaff');
+        let reloadStaffBtn = document.querySelector('.reloadStaff');
+        let adminBtns = document.querySelector('.adminBtns');
+
+        // Применение шаблонов
+
+        createList(staff, catalog, authUser);
+        displayBtnAddStaff(adminBtns, authUser);
+
+        // Обработка взаимодействия с элементами каталога
+
+        for (let item of catalog.children) {
+            // для админа (изменение каталога)
+
+            let editStaffBtn = item.querySelector('.editStaff');
+            let deleteStaffBtn = item.querySelector('.deleteStaff');
+
+            if (editStaffBtn) {
+                editStaffBtn.onclick = function() {
+                    popupEditMenu(item, editForm);
+                }
+            }
+
+            if (deleteStaffBtn) {
+                deleteStaffBtn.onclick = function() {
+                    deleteStaffElem(item, staff);
+                }
+            }
+
+            // для пользователя (добавление в корзину)
+
+            let addStaffToBinBtn = item.querySelector('.addStaffToBin');
+            let removeStaffFromBinBtn = item.querySelector('.removeStaffFromBin');
+            
+            if (addStaffToBinBtn) {
+                addStaffToBinBtn.onclick = function() {
+                    addStaffToBin(item);
+                    reloadPage();
+                }
+            }
+
+            if (removeStaffFromBinBtn) {
+                removeStaffFromBinBtn.onclick = function() {
+                    removeStaffFromBin(item);
+                    reloadPage();
+                }
+            }
+        }
+
+        addStaffBtn.onclick = () => {
+            popupEditMenu(getEmptyLi(staff), editForm);
+        }
+
+        reloadStaffBtn.onclick = () => {
+            localStorage.removeItem('staff');
+            reloadPage();
+        }
+
+        // Изменение содержимого элемента каталога
+
+        editForm.onclick = function(event) {
+            event.preventDefault();
+
+            if (event.target.id == 'editSubmit') {
+                
+                let newStaffElem = getStaffChanges(this);
+
+                replaceStaffElem(staff, newStaffElem);
+
+                updateElems(staff, 'staff');
+                reloadPage();
+
+            } else if (event.target.id == 'editCancel') {
+
+                hideEditMenu(editForm);
+                // console.log('скрываю менюшку');
+
+            }
+        }
+
+        // отображение пустой корзины
+
+        if (catalog.children.length <= 1) {
+            showMelina(catalog);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+.globalWrapper {
+    width: 80%;
+}
+
+.navPayment {
+    padding: 10px 175px 10px 25px;
+    border: 1px solid #000;
+    position: relative;
+    overflow: hidden;
+    transition: .15s ease-in-out;
+}
+
+.navPayment:hover {
+    background: gold;
+}
+
+    .btnPayment {
+        transition: .25s ease-in-out;
+
+        border: none;
+        border-left: 1px solid #000;
+
+        width: 150px;
+        position: absolute;
+        top: 0;
+        right: -100%;
+    }
+
+    .navPayment:hover .btnPayment {
+        right: 0;
+    }
+
+#bin {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    height: 65vh;
+    border: 1px solid #000;
+
+    overflow-x: hidden;
+    overflow-y: scroll;
+    padding: 25px;
+}
+
+    #bin li {
+        padding: 15px;
+        border: 1px solid black;
+        width: 175px;
+        height: fit-content;
+        margin: 0 25px 40px 25px;
+        list-style: none;
+        transition: .15s ease-in-out;
+
+        position: relative;
+    }
+
+    #bin li:hover {
+        border-top-right-radius: 15px;
+        border-bottom-left-radius: 15px;
+        border: 1px solid #000000cc;
+        background: lightgoldenrodyellow;
+        transform: scale(1.05);
+    }
+
+        #bin li > * {
+            margin-top: 10px;
+        }
+
+        #bin li > *:first-child {
+            margin-top: 0;
+        }
+
+            #bin button {
+                display: flex;
+            }
+
+            #bin h2 {
+                font-size: var(--header-staff-size);
+            }
+
+            #bin p {
+                font-size: var(--paragraph-staff-size);
+            }
+
+                #bin p:last-of-type::after {
+                    content: ' рублей';
+                }
+
+            #bin img.catalog-item {
+                padding: 10px;
+                border: 1px solid black;
+                width: 100%;
+                background: white;
+
+                height: 150px;
+            }
+
+            #bin .btnsWrapper {
+                margin-left: 10px;
+                margin-right: 10px;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            #bin .addStaffToBin,
+            #bin .removeStaffFromBin {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+    .sumTotal::before {
+        content: 'К оплате: ';
+    }
+
+    .sumTotal::after {
+        content: ' рублей';
+    }
